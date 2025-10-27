@@ -58,42 +58,6 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void display7SEG_A(int num) {
-	const uint8_t seg_pattern_A[10][7] = { { 0, 0, 0, 0, 0, 0, 1 }, //0
-			{ 1, 0, 0, 1, 1, 1, 1 }, //1
-			{ 0, 0, 1, 0, 0, 1, 0 }, //2
-			{ 0, 0, 0, 0, 1, 1, 0 }, //3
-			{ 1, 0, 0, 1, 1, 0, 0 }, //4
-			{ 0, 1, 0, 0, 1, 0, 0 }, //5
-			{ 0, 1, 0, 0, 0, 0, 0 }, //6
-			{ 0, 0, 0, 1, 1, 1, 1 }, //7
-			{ 0, 0, 0, 0, 0, 0, 0 }, //8
-			{ 0, 0, 0, 0, 1, 0, 0 }, //9
-			};
-
-	uint16_t pins_A[7] = { Seg1_a_Pin, Seg1_b_Pin, Seg1_c_Pin, Seg1_d_Pin,
-	Seg1_e_Pin, Seg1_f_Pin, Seg1_g_Pin };
-
-	if (num < 0 || num > 9) {
-		num = 0;
-	}
-	for (int i = 0; i < 7; i++) {
-		HAL_GPIO_WritePin(GPIOB, pins_A[i],
-				seg_pattern_A[num][i] ? GPIO_PIN_SET : GPIO_PIN_RESET);
-	}
-}
-void led_buffer(int EN) {
-	switch (EN) {
-	case 0:
-		HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_SET);
-		break;
-	case 1:
-		HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_RESET);
-		break;
-	default:
-		break;
-	}
-}
 /* USER CODE END 0 */
 
 /**
