@@ -5,9 +5,12 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Core/Src/7_SEGMENT.c \
 ../Core/Src/button.c \
-../Core/Src/input_processing.c \
-../Core/Src/input_reading.c \
+../Core/Src/fsm_auto.c \
+../Core/Src/fsm_manual.c \
+../Core/Src/global.c \
+../Core/Src/led.c \
 ../Core/Src/main.c \
 ../Core/Src/stm32f1xx_hal_msp.c \
 ../Core/Src/stm32f1xx_it.c \
@@ -17,9 +20,12 @@ C_SRCS += \
 ../Core/Src/timer.c 
 
 OBJS += \
+./Core/Src/7_SEGMENT.o \
 ./Core/Src/button.o \
-./Core/Src/input_processing.o \
-./Core/Src/input_reading.o \
+./Core/Src/fsm_auto.o \
+./Core/Src/fsm_manual.o \
+./Core/Src/global.o \
+./Core/Src/led.o \
 ./Core/Src/main.o \
 ./Core/Src/stm32f1xx_hal_msp.o \
 ./Core/Src/stm32f1xx_it.o \
@@ -29,9 +35,12 @@ OBJS += \
 ./Core/Src/timer.o 
 
 C_DEPS += \
+./Core/Src/7_SEGMENT.d \
 ./Core/Src/button.d \
-./Core/Src/input_processing.d \
-./Core/Src/input_reading.d \
+./Core/Src/fsm_auto.d \
+./Core/Src/fsm_manual.d \
+./Core/Src/global.d \
+./Core/Src/led.d \
 ./Core/Src/main.d \
 ./Core/Src/stm32f1xx_hal_msp.d \
 ./Core/Src/stm32f1xx_it.d \

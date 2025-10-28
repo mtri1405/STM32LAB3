@@ -1,0 +1,5 @@
+led.c:15:6:turn_on_LED	16	static
+led.c:19:6:turn_off_LED	16	static
+led.c:23:6:toggle_LED	16	static
+led.c:27:6:init_blinkLED	16	static
+led.c:64:6:blinkLED	16	static

@@ -17,7 +17,7 @@ const uint8_t seg_pattern[10][7] = { { 0, 0, 0, 0, 0, 0, 1 }, //0
 		{ 0, 0, 0, 1, 1, 1, 1 }, //7
 		{ 0, 0, 0, 0, 0, 0, 0 }, //8
 		{ 0, 0, 0, 0, 1, 0, 0 }, //9
-};
+		};
 
 uint16_t segPins_A[7] = { Seg1_a_Pin, Seg1_b_Pin, Seg1_c_Pin, Seg1_d_Pin,
 Seg1_e_Pin, Seg1_f_Pin, Seg1_g_Pin };
@@ -27,7 +27,8 @@ Seg2_e_Pin, Seg2_f_Pin, Seg2_g_Pin };
 
 void display7SEG(int num, uint16_t *segPins) {
 
-	if (num < 0 || num > 9) num = 0;
+	if (num < 0 || num > 9)
+		num = 0;
 
 	for (int i = 0; i < 7; i++) {
 		HAL_GPIO_WritePin(GPIOB, segPins[i],
@@ -35,27 +36,30 @@ void display7SEG(int num, uint16_t *segPins) {
 	}
 }
 
-void update7SEG(int numsA, int numsB){
-	static int state = 0;
+void update7SEG(int numsA, int numsB) {
+	if (actions[TIME_SEGMENT].timer_flag == 1) {
+		static int state = 0;
 
-	int tensA = numA / 10;
-	int onesA = numA % 10;
+		int tensA = numsA / 10;
+		int onesA = numsA % 10;
 
-	int tensB = numB / 10;
-	int onesB = numB % 10;
+		int tensB = numsB / 10;
+		int onesB = numsB % 10;
 
-	if (state == 1){
-		// Display Ten digits
-		HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, EN_B_Pin, GPIO_PIN_SET);
-		display7SEG(tensA, segPins_A);
-		display7SEG(tensB, segPins_B);
-	} else if (state == 0){
-		// Display One digits
-		HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, EN_B_Pin, GPIO_PIN_RESET);
-		display7SEG(onesA, segPins_A);
-		display7SEG(onesB, segPins_B);
+		if (state == 1) {
+			// Display Ten digits
+			HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOA, EN_B_Pin, GPIO_PIN_RESET);
+			display7SEG(tensA, segPins_A);
+			display7SEG(tensB, segPins_B);
+		} else if (state == 0) {
+			// Display One digits
+			HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, EN_B_Pin, GPIO_PIN_SET);
+			display7SEG(onesA, segPins_A);
+			display7SEG(onesB, segPins_B);
+		}
+		state = 1 - state; // Change state
+		reset(TIME_SEGMENT);
 	}
-	state = 1 - state; // Change state
 }

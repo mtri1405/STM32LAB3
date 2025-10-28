@@ -22,9 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "timer.h"
-//#include "input_reading.h"
-#include <stdbool.h>
+#include "global.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +57,22 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+int timer1_counter = 0;
+int timer1_flag = 0;
+
+void setTimer1(int duration) {
+	timer1_counter = duration;
+	timer1_flag = 0;
+}
+
+void timer1Run() {
+	if (timer1_counter > 0) {
+		timer1_counter--;
+		if (timer1_counter <= 0) {
+			timer1_flag = 1;
+		}
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -87,20 +102,15 @@ int main(void) {
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	MX_TIM2_Init();
+	HAL_TIM_Base_Start_IT(&htim2);
 	/* USER CODE BEGIN 2 */
-	int counterSEG = 0;
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		display7SEG_A(counterSEG);
-		counterSEG++;
-		if (counterSEG >= 10) {
-			counterSEG = 0;
-		}
-		HAL_GPIO_TogglePin(GPIOA, EN_A_Pin);
-		HAL_Delay(1000);
+		run();
+		HAL_Delay(5);
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
@@ -160,7 +170,7 @@ static void MX_TIM2_Init(void) {
 	htim2.Instance = TIM2;
 	htim2.Init.Prescaler = 7999;
 	htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim2.Init.Period = 9;
+	htim2.Init.Period = 99;
 	htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim2) != HAL_OK) {
@@ -197,9 +207,9 @@ static void MX_GPIO_Init(void) {
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOA,
-			LED_A_RED_Pin | LED_A_AMBER_Pin | L_ED_A_GREEN_Pin | EN_A_Pin
-					| LED_RED_Pin | LED_B_AMBER_Pin | LED_B_GREEN_Pin | EN_B_Pin,
-			GPIO_PIN_RESET);
+			LED_A_RED_Pin | LED_A_AMBER_Pin | LED_A_GREEN_Pin | EN_A_Pin
+					| LED_RED_Pin | LED_B_RED_Pin | LED_B_AMBER_Pin
+					| LED_B_GREEN_Pin | EN_B_Pin, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOB,
@@ -214,21 +224,15 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	HAL_GPIO_Init(Button1_GPIO_Port, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : LED_A_RED_Pin LED_A_AMBER_Pin L_ED_A_GREEN_Pin EN_A_Pin
-	 LED_RED_Pin LED_B_AMBER_Pin LED_B_GREEN_Pin EN_B_Pin */
-	GPIO_InitStruct.Pin = LED_A_RED_Pin | LED_A_AMBER_Pin | L_ED_A_GREEN_Pin
-			| EN_A_Pin | LED_RED_Pin | LED_B_AMBER_Pin | LED_B_GREEN_Pin
-			| EN_B_Pin;
+	/*Configure GPIO pins : LED_A_RED_Pin LED_A_AMBER_Pin LED_A_GREEN_Pin EN_A_Pin
+	 LED_RED_Pin LED_B_RED_Pin LED_B_AMBER_Pin LED_B_GREEN_Pin
+	 EN_B_Pin */
+	GPIO_InitStruct.Pin = LED_A_RED_Pin | LED_A_AMBER_Pin | LED_A_GREEN_Pin
+			| EN_A_Pin | LED_RED_Pin | LED_B_RED_Pin | LED_B_AMBER_Pin
+			| LED_B_GREEN_Pin | EN_B_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-	/*Configure GPIO pins : LED_B_RED_Pin Button_1_Pin Button_2_Pin Button_3_Pin */
-	GPIO_InitStruct.Pin = LED_B_RED_Pin | Button_1_Pin | Button_2_Pin
-			| Button_3_Pin;
-	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 	/*Configure GPIO pins : Seg1_a_Pin Seg1_b_Pin Seg1_c_Pin Seg2_d_Pin
@@ -243,15 +247,19 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+	/*Configure GPIO pins : MODE_Pin TIME_Pin SET_Pin */
+	GPIO_InitStruct.Pin = MODE_Pin | TIME_Pin | SET_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
 }
 
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-//	timerRun();
-	if (htim->Instance == TIM2) {
-//		button_reading();
-	}
+	timerRun();
 }
+
 /* USER CODE END 4 */
 
 /**
