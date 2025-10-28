@@ -57,22 +57,6 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int timer1_counter = 0;
-int timer1_flag = 0;
-
-void setTimer1(int duration) {
-	timer1_counter = duration;
-	timer1_flag = 0;
-}
-
-void timer1Run() {
-	if (timer1_counter > 0) {
-		timer1_counter--;
-		if (timer1_counter <= 0) {
-			timer1_flag = 1;
-		}
-	}
-}
 /* USER CODE END 0 */
 
 /**
@@ -104,6 +88,7 @@ int main(void) {
 	MX_TIM2_Init();
 	HAL_TIM_Base_Start_IT(&htim2);
 	/* USER CODE BEGIN 2 */
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -257,6 +242,7 @@ static void MX_GPIO_Init(void) {
 
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	getKeyInput();
 	timerRun();
 }
 

@@ -13,10 +13,12 @@ int Time_amber = 3;
 int Time_green = 7;
 
 void run(){
+
 	switch (admin_mode){
 	case INIT:
 		admin_mode = ACTIVE_MODE;
-		setupTime(TIME_SEGMENT, LED_SEGMENT_CYCLE);
+		setupTime(SYSTEM_LED, 500);
+		setupTime(TIME_SEGMENT, LED_SEGMENT_CYCLE / 2);
 		setupTime(ONE_SECOND, SECOND);
 		init_RED_GREEN();
 		break;

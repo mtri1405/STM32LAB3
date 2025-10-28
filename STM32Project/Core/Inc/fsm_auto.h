@@ -20,7 +20,7 @@ extern int lane1;
 extern int lane2;
 
 void fsm_auto_run();
-
+void come_back_auto();
 void init_RED_GREEN();
 void init_RED_AMBER();
 void init_GREEN_RED();

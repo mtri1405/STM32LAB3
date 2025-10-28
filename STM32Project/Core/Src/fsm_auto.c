@@ -11,21 +11,26 @@ int state_auto = 0;
 int lane1 = 0;
 int lane2 = 0;
 
-void fsm_auto_run(){
-	if (isModePress()){
+void fsm_auto_run() {
+	if (isModePress()) {
 		admin_mode = MANUAL_MODE;
 		init_fsm_manual();
 		return;
 	}
 
-	if (actions[ONE_SECOND].timer_flag == 1){
+	if (actions[SYSTEM_LED].timer_flag == 1) {
+		toggle_LED(0);
+		reset(SYSTEM_LED);
+	}
+
+	if (actions[ONE_SECOND].timer_flag == 1) {
 		lane1--;
 		lane2--;
 		reset(ONE_SECOND);
 	}
 
-	if (actions[TIME_COUNT_PROGRAM].timer_flag == 1){
-		switch(state_auto){
+	if (actions[TIME_COUNT_PROGRAM].timer_flag == 1) {
+		switch (state_auto) {
 		case RED_GREEN:
 			init_RED_AMBER();
 			break;
@@ -45,10 +50,27 @@ void fsm_auto_run(){
 
 	update7SEG(lane1, lane2);
 
-
 }
-
-void init_RED_GREEN(){
+void come_back_auto(){
+	setupTime(ONE_SECOND, SECOND);
+    switch (state_auto)
+    {
+    case RED_GREEN:
+        init_RED_GREEN();
+        break;
+    case RED_AMBER:
+        init_RED_AMBER();
+        break;
+    case GREEN_RED:
+        init_GREEN_RED();
+        break;
+    case AMBER_RED:
+        init_AMBER_RED();
+    default:
+        break;
+    }
+}
+void init_RED_GREEN() {
 	turn_on_LED(LED_A_RED);
 	turn_on_LED(LED_B_GREEN);
 
@@ -64,7 +86,7 @@ void init_RED_GREEN(){
 	reset(ONE_SECOND);
 }
 
-void init_RED_AMBER(){
+void init_RED_AMBER() {
 	turn_on_LED(LED_A_RED);
 	turn_on_LED(LED_B_AMBER);
 
@@ -79,7 +101,7 @@ void init_RED_AMBER(){
 	reset(ONE_SECOND);
 }
 
-void init_GREEN_RED(){
+void init_GREEN_RED() {
 	turn_on_LED(LED_A_GREEN);
 	turn_on_LED(LED_B_RED);
 
@@ -95,7 +117,7 @@ void init_GREEN_RED(){
 	reset(ONE_SECOND);
 }
 
-void init_AMBER_RED(){
+void init_AMBER_RED() {
 	turn_on_LED(LED_A_AMBER);
 	turn_on_LED(LED_B_RED);
 

@@ -10,6 +10,7 @@
 
 #include "main.h"
 #include <stdbool.h>
+#include <math.h>
 #include "7_SEGMENT.h"
 #include "button.h"
 #include "fsm_auto.h"
