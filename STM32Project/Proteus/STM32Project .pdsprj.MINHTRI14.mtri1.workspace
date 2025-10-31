@@ -355,7 +355,7 @@
      <ITEM name="TopLineAddress">E000E000</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="600" x="747" flags="0000000b" y="740" h="400" pid="100" iid="1">
+   <POPUP w="600" x="747" flags="0000000a" y="740" h="400" pid="100" iid="1">
     <PROPERTIES/>
    </POPUP>
    <POPUP w="300" x="767" flags="0000000b" y="837" h="300" pid="101" iid="1">
@@ -364,7 +364,7 @@
      <ITEM name="AutoResize">No</ITEM>
      <ITEM name="Gridlines">Yes</ITEM>
      <ITEM name="Name Column Width">100</ITEM>
-     <ITEM name="Previous Value Column Width">100</ITEM>
+     <ITEM name="Previous Value Column Width">-102</ITEM>
      <ITEM name="ShowAddresses">Yes</ITEM>
      <ITEM name="ShowGlobals">Yes</ITEM>
      <ITEM name="ShowPreviousValues">Yes</ITEM>

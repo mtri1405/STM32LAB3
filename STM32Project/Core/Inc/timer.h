@@ -9,7 +9,7 @@
 #define INC_TIMER_H_
 #include <stdbool.h>
 
-#define NUMBER_OF_ACTIONS 10
+#define NUMBER_OF_ACTIONS 5
 #define TIMER_CYCLE 100
 
 #define SYSTEM_LED			0
