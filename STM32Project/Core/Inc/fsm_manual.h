@@ -11,6 +11,13 @@
 
 void init_fsm_manual();
 void init_manual_control();
+
+void handleModeButton();
+void handleTimeButton();
+void handleSetButton();
+void handleBlinkLed();
+void handleControlMode();
+
 void manual_control_run();
 void fsm_manual_run();
 

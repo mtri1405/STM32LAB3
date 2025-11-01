@@ -43,8 +43,8 @@ void init_blinkLED(int color) {
 		turn_off_LED(LED_A_RED);
 		turn_off_LED(LED_B_RED);
 
-		turn_off_LED(LED_A_AMBER);
-		turn_off_LED(LED_B_AMBER);
+		turn_off_LED(LED_A_GREEN);
+		turn_off_LED(LED_B_GREEN);
 		break;
 	case GREEN:
 		turn_on_LED(LED_A_GREEN);

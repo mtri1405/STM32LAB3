@@ -1,4 +1,9 @@
-fsm_manual.c:12:6:init_fsm_manual	8	static
-fsm_manual.c:21:6:init_manual_control	8	static
-fsm_manual.c:36:6:manual_control_run	8	static
-fsm_manual.c:61:6:fsm_manual_run	16	static
+fsm_manual.c:14:6:init_fsm_manual	8	static
+fsm_manual.c:22:6:init_manual_control	8	static
+fsm_manual.c:40:6:handleControlMode	8	static
+fsm_manual.c:49:6:handleModeButton	8	static
+fsm_manual.c:63:6:handleTimeButton	8	static
+fsm_manual.c:69:6:handleSetButton	8	static
+fsm_manual.c:91:6:handleBlinkLed	8	static
+fsm_manual.c:98:6:fsm_manual_run	8	static
+fsm_manual.c:127:6:manual_control_run	8	static

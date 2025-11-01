@@ -7,10 +7,9 @@
 
 #include "global.h"
 
-int admin_mode = 0;
-int Time_red = 10;
-int Time_amber = 3;
-int Time_green = 7;
+int admin_mode = INIT;
+
+int TrafficTimer[3] = {10, 7, 3}; // RED - GREEN - AMBER
 
 void run(){
 	switch (admin_mode){

@@ -31,16 +31,16 @@
 
 #define RUNNING 1
 
-#define GREEN  3
-#define AMBER  4
-#define RED    5
+#define RED    0
+#define GREEN  1
+#define AMBER  2
+
+#define LED_SYS 0
 
 #define CHANGE_LED 2
-
+extern int TrafficTimer[3]; // RED - GREEN - AMBER
 extern int admin_mode;
-extern int Time_red;
-extern int Time_amber;
-extern int Time_green;
+
 
 void run();
 

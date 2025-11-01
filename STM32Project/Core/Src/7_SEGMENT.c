@@ -36,15 +36,15 @@ void display7SEG(int num, uint16_t *segPins) {
 	}
 }
 
-void update7SEG(int numsA, int numsB) {
+void update7SEG(int duration, int mode) {
 	if (actions[TIME_SEGMENT].timer_flag == 1) {
 		static int state = 0;
 
-		int tensA = numsA / 10;
-		int onesA = numsA % 10;
+		int tensA = duration / 10;
+		int onesA = duration % 10;
 
-		int tensB = numsB / 10;
-		int onesB = numsB % 10;
+		int tensB = mode / 10;
+		int onesB = mode % 10;
 
 		if (state == 1) {
 			// Display Ten digits

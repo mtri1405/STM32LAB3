@@ -19,11 +19,11 @@ extern int state_auto;
 extern int lane1;
 extern int lane2;
 
+void handle_auto_events();
 void fsm_auto_run();
 void come_back_auto();
 void init_RED_GREEN();
 void init_RED_AMBER();
 void init_GREEN_RED();
 void init_AMBER_RED();
-
 #endif /* INC_FSM_AUTO_H_ */
