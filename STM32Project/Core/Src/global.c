@@ -13,7 +13,6 @@ int Time_amber = 3;
 int Time_green = 7;
 
 void run(){
-
 	switch (admin_mode){
 	case INIT:
 		admin_mode = ACTIVE_MODE;
@@ -24,8 +23,13 @@ void run(){
 		break;
 	case ACTIVE_MODE:
 		fsm_auto_run();
+		break;
 	case MANUAL_MODE:
 		fsm_manual_run();
+		break;
+	case MANUAL_CONTROL_MODE:
+		manual_control_run();
+		break;
 	default:
 		break;
 	}

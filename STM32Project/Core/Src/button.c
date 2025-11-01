@@ -11,14 +11,16 @@
 uint16_t pin_of_buttons[NO_BUTTON] = {
 MODE_Pin,
 TIME_Pin,
-SET_Pin, };
+SET_Pin,
+CONTROL_Pin,
+};
 
 // Declare number of button
 keyInput button[NO_BUTTON];
 
 //
 int isButtonPress(int idx) {
-	if (idx > 2 || idx < 0) {
+	if (idx > NO_BUTTON || idx < 0) {
 		return -1;
 	} else {
 		if (button[idx].flag == 1) {
@@ -28,17 +30,44 @@ int isButtonPress(int idx) {
 	}
 	return 0;
 }
-
+int isButtonHolding(int idx) {
+	if (idx > NO_BUTTON || idx < 0) {
+		return -1;
+	} else {
+		if (button[idx].isHoldingFlag == 1) {
+			return 1;
+		}
+	}
+	return 0;
+}
+// Kiểm tra MODE button
 int isModePress() {
 	return isButtonPress(MODE);
 }
+int isModeHold() {
+	return isButtonHolding(MODE);
+}
+
+// Kiểm tra TIME button
 int isTimePress() {
 	return isButtonPress(TIME);
 }
+int isTimeHold() {
+	return isButtonHolding(TIME);
+}
+
+// Kiểm tra SET button
 int isSetPress() {
 	return isButtonPress(SET);
 }
+int isSetHold() {
+	return isButtonHolding(SET);
+}
 
+// Kiểm tra Control button
+int isControlPress(){
+	return isButtonPress(CONTROL);
+}
 void getKeyInput() {
 	for (int i = 0; i < NO_BUTTON; i++) {
 		// shifting the button registry history
@@ -60,14 +89,15 @@ void getKeyInput() {
 					button[i].flag = 1;
 				}
 			} else {
-				// If button is holding press, count down the long press timer
-				button[i].timeLongPress--;
-				if (button[i].timeLongPress <= 0) {
-					button[i].timeLongPress = timeOutForKeyPress;
-					//	Create event for long press timer
-					if (button[i].KeyReg3 == PRESS_STATE) {
+				if (button[i].KeyReg3 == PRESS_STATE) {
+					button[i].timeLongPress--;
+					if (button[i].timeLongPress <= 0) {
+						button[i].timeLongPress = timeOutForKeyPress;
 						button[i].flag = 1;
+						button[i].isHoldingFlag = 1;
 					}
+				} else {
+					button[i].isHoldingFlag = 0;
 				}
 			}
 		}

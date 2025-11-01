@@ -10,7 +10,7 @@
 
 #include "main.h"
 
-#define NO_BUTTON 3
+#define NO_BUTTON 4
 #define PRESS_STATE RESET
 #define NORMAL_STATE SET
 #define timeOutForKeyPress 50
@@ -18,25 +18,37 @@
 #define MODE 0
 #define TIME 1
 #define SET 2
+#define CONTROL 3
 
 // Define struct for debouncing input
-typedef struct{
+typedef struct {
 	int KeyReg0;
 	int KeyReg1;
 	int KeyReg2;
 	int KeyReg3;
 	int timeLongPress;
 	int flag;
+	int isHoldingFlag;
 } keyInput;
 
 // Checking if flag = 1
 int isButtonPress(int);
+int isButtonHolding(int);
 
-// Checking for each mode
+// Kiểm tra MODE button
 int isModePress();
-int isTimePress();
-int isSetPress();
+int isModeHold();
 
+// Kiểm tra TIME button
+int isTimePress();
+int isTimeHold();
+
+// Kiểm tra SET button
+int isSetPress();
+int isSetHold();
+
+// Kiểm tra Control button
+int isControlPress();
 // Read input from button
 void getKeyInput();
 

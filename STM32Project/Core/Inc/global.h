@@ -23,9 +23,11 @@
 #define TIMER_CYCLE 100
 #define LED_SEGMENT_CYCLE 200
 #define SECOND 1000
-#define INIT 0
-#define ACTIVE_MODE 1
-#define MANUAL_MODE 2
+
+#define INIT 				0
+#define ACTIVE_MODE 		1
+#define MANUAL_MODE 		2
+#define MANUAL_CONTROL_MODE 3
 
 #define RUNNING 1
 

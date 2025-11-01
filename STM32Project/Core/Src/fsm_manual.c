@@ -18,13 +18,57 @@ void init_fsm_manual(){
 	temp_amber = Time_amber;
 	temp_green = Time_green;
 }
+void init_manual_control(){
+	setupTime(ONE_SECOND, SECOND);
+	// state_auto là trạng thái hiện tại của đèn giao thông
+	if (state_auto == RED_AMBER) state_auto = GREEN_RED;
+	if (state_auto == AMBER_RED) state_auto = RED_GREEN;
+	switch (state_auto){
+	case GREEN_RED:
+		init_GREEN_RED();
+		break;
+	case RED_GREEN:
+		init_RED_GREEN();
+		break;
+	}
+}
+// TODO đem switch ra ngoài
+void manual_control_run(){
+	// Giữ Mode và Set sẽ trở về chế độ auto
+	if (isControlPress()){
+			admin_mode = ACTIVE_MODE;
+			come_back_auto();
+			return;
+	}
+	// Nhấn Set sẽ chuyển đèn
+	if (isSetPress()){
+		switch(state_auto){
+		case GREEN_RED:
+			state_auto = RED_GREEN;
+			init_RED_GREEN();
+			break;
+		case RED_GREEN:
+			state_auto = GREEN_RED;
+			init_GREEN_RED();
+			break;
+		default:
+			break;
+		}
+		return;
+	}
+	update7SEG(0,0);
+}
 void fsm_manual_run(){
 	if (actions[TIME_COUNT_PROGRAM].timer_flag == 1){
 		admin_mode = ACTIVE_MODE;
 		come_back_auto();
 		return;
 	}
-
+	if (isControlPress()){
+		admin_mode = MANUAL_CONTROL_MODE;
+		init_manual_control();
+		return;
+	}
 	if (isSetPress()){
 		admin_mode = ACTIVE_MODE;
 
@@ -53,6 +97,7 @@ void fsm_manual_run(){
 			break;
 		}
 		come_back_auto();
+		return;
 	}
 
 	if (isModePress()){
@@ -73,6 +118,7 @@ void fsm_manual_run(){
 			break;
 		}
 		init_blinkLED(state_manual);
+		return;
 	}
 	if (isTimePress()){
 		switch(state_manual){
@@ -85,6 +131,7 @@ void fsm_manual_run(){
 		case AMBER:
 			temp_amber++;
 		}
+		return;
 	}
 	if (actions[ONE_SECOND].timer_flag == 1){
 		reset(ONE_SECOND);

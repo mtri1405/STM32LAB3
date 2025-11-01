@@ -21,12 +21,14 @@ void fsm_auto_run() {
 	if (actions[SYSTEM_LED].timer_flag == 1) {
 		toggle_LED(0);
 		reset(SYSTEM_LED);
+		return;
 	}
 
 	if (actions[ONE_SECOND].timer_flag == 1) {
 		lane1--;
 		lane2--;
 		reset(ONE_SECOND);
+		return;
 	}
 
 	if (actions[TIME_COUNT_PROGRAM].timer_flag == 1) {
@@ -46,6 +48,7 @@ void fsm_auto_run() {
 		default:
 			break;
 		}
+		return;
 	}
 
 	update7SEG(lane1, lane2);

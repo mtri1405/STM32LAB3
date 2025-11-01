@@ -1,6 +1,6 @@
 fsm_auto.c:14:6:fsm_auto_run	8	static
-fsm_auto.c:54:6:come_back_auto	8	static
-fsm_auto.c:73:6:init_RED_GREEN	8	static
-fsm_auto.c:89:6:init_RED_AMBER	8	static
-fsm_auto.c:104:6:init_GREEN_RED	8	static
-fsm_auto.c:120:6:init_AMBER_RED	8	static
+fsm_auto.c:57:6:come_back_auto	8	static
+fsm_auto.c:76:6:init_RED_GREEN	8	static
+fsm_auto.c:92:6:init_RED_AMBER	8	static
+fsm_auto.c:107:6:init_GREEN_RED	8	static
+fsm_auto.c:123:6:init_AMBER_RED	8	static

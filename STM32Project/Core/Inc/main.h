@@ -98,6 +98,8 @@ void Error_Handler(void);
 #define TIME_GPIO_Port GPIOA
 #define SET_Pin GPIO_PIN_12
 #define SET_GPIO_Port GPIOA
+#define CONTROL_Pin GPIO_PIN_15
+#define CONTROL_GPIO_Port GPIOA
 #define Seg1_d_Pin GPIO_PIN_3
 #define Seg1_d_GPIO_Port GPIOB
 #define Seg1_e_Pin GPIO_PIN_4
