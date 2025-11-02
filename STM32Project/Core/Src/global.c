@@ -21,6 +21,7 @@ void run(){
 		init_RED_GREEN();
 		break;
 	case ACTIVE_MODE:
+
 		fsm_auto_run();
 		break;
 	case MANUAL_MODE:

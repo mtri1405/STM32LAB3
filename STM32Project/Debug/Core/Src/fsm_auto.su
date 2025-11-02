@@ -1,7 +1,7 @@
 fsm_auto.c:17:6:handle_auto_events	8	static
-fsm_auto.c:42:6:fsm_auto_run	8	static
-fsm_auto.c:82:6:come_back_auto	8	static
-fsm_auto.c:97:6:init_RED_GREEN	8	static
-fsm_auto.c:113:6:init_RED_AMBER	8	static
-fsm_auto.c:128:6:init_GREEN_RED	8	static
-fsm_auto.c:144:6:init_AMBER_RED	8	static
+fsm_auto.c:44:6:fsm_auto_run	8	static
+fsm_auto.c:90:6:come_back_auto	8	static
+fsm_auto.c:105:6:init_RED_GREEN	8	static
+fsm_auto.c:121:6:init_RED_AMBER	8	static
+fsm_auto.c:136:6:init_GREEN_RED	8	static
+fsm_auto.c:152:6:init_AMBER_RED	8	static

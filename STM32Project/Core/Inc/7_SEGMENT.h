@@ -17,4 +17,5 @@ uint16_t segPins_B[7];
 
 void display7SEG(int, uint16_t*);
 void update7SEG(int, int);
+
 #endif /* INC_7_SEGMENT_H_ */

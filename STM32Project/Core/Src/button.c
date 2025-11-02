@@ -87,6 +87,8 @@ void getKeyInput() {
 				if (button[i].KeyReg3 == PRESS_STATE) {
 					button[i].timeLongPress = timeOutForKeyPress;
 					button[i].flag = 1;
+				} else {
+					button[i].flag = 0;
 				}
 			} else {
 				if (button[i].KeyReg3 == PRESS_STATE) {

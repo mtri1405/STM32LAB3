@@ -10,6 +10,13 @@
 int state_manual = 0;   // 3 state RED - 0, GREEN - 1, AMBER - 2
 int temp_time;
 
+enum ButtonEvent getButtonEvent() {
+	if (isModePress()) return MODE_PRESSED;
+	if (isTimePress()) return TIME_PRESSED;
+	if (isSetPress())  return SET_PRESSED;
+	return NONE;
+}
+
 /*=====================[ INIT FUNCTIONS ]=====================*/
 void init_fsm_manual() {
 	state_manual = RED;
@@ -45,47 +52,48 @@ void handleControlMode() {
 	init_manual_control();
 }
 
-// Nếu Mode button được nhấn, chuyển trạng thái
-void handleModeButton() {
-	if (!isModePress()) return; // Không nhấn thì thoát luôn
-	setupTime(ONE_SECOND, SECOND / 2);
-	state_manual++;
-	if (state_manual > AMBER) {
+void handleButton() {
+	switch (getButtonEvent()) {
+	case MODE_PRESSED:
+		// xử lý mode
+		setupTime(ONE_SECOND, SECOND / 2);
+		state_manual++;
+		if (state_manual > AMBER) {
+			state_manual = RED;
+			admin_mode = ACTIVE_MODE;
+			come_back_auto();
+			return;
+		}
+		temp_time = TrafficTimer[state_manual];
+		init_blinkLED(state_manual);
+		break;
+	case TIME_PRESSED:
+		// xử lý time
+		if (++temp_time > 99)
+			temp_time = 1; // Giới hạn mức tối đa
+		break;
+	case SET_PRESSED:
+		// xử lý set
+		switch (state_manual) {
+		case RED:
+			TrafficTimer[RED] = temp_time;
+			TrafficTimer[GREEN] = TrafficTimer[RED] - TrafficTimer[AMBER];
+			break;
+		case GREEN:
+			TrafficTimer[GREEN] = temp_time;
+			TrafficTimer[RED] = TrafficTimer[GREEN] + TrafficTimer[AMBER];
+			break;
+		case AMBER:
+			TrafficTimer[AMBER] = temp_time;
+			TrafficTimer[RED] = TrafficTimer[GREEN] + TrafficTimer[AMBER];
+			break;
+		}
 		admin_mode = ACTIVE_MODE;
 		come_back_auto();
-		return;
-	}
-	temp_time = TrafficTimer[state_manual];
-	init_blinkLED(state_manual);
-}
-
-// Nếu Time button được nhấn, tăng thời gian
-void handleTimeButton() {
-	if (!isTimePress()) return;
-
-	if (++temp_time > 99) temp_time = 1; // Giới hạn mức tối đa
-}
-
-void handleSetButton() {
-	if (!isSetPress())
-		return; // Không nhấn thì thoát luôn
-
-	switch (state_manual) {
-	case RED:
-		TrafficTimer[RED] = temp_time;
-		TrafficTimer[GREEN] = TrafficTimer[RED] - TrafficTimer[AMBER];
 		break;
-	case GREEN:
-		TrafficTimer[GREEN] = temp_time;
-		TrafficTimer[RED] = TrafficTimer[GREEN] + TrafficTimer[AMBER];
-		break;
-	case AMBER:
-		TrafficTimer[AMBER] = temp_time;
-		TrafficTimer[RED] = TrafficTimer[GREEN] + TrafficTimer[AMBER];
+	default:
 		break;
 	}
-	admin_mode = ACTIVE_MODE;
-	come_back_auto();
 }
 /*=====================[ OUTPUT FUNCTIONS ]=====================*/
 void handleBlinkLed() {
@@ -99,25 +107,19 @@ void fsm_manual_run() {
 	switch (state_manual) {
 	case RED:
 		update7SEG(temp_time, 2);
-		handleModeButton();
-		handleTimeButton();
-		handleSetButton();
+		handleButton();
 		handleBlinkLed();
 		break;
 
 	case GREEN:
 		update7SEG(temp_time, 3);
-		handleModeButton();
-		handleTimeButton();
-		handleSetButton();
+		handleButton();
 		handleBlinkLed();
 		break;
 
 	case AMBER:
 		update7SEG(temp_time, 4);
-		handleModeButton();
-		handleTimeButton();
-		handleSetButton();
+		handleButton();
 		handleBlinkLed();
 		break;
 	}
