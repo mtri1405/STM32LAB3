@@ -79,3 +79,9 @@ void blinkLED(int color) {
 		break;
 	}
 }
+void task_ToggleSystemLed() {
+    // Chỉ nháy khi đang ở AUTO_MODE
+    if (STATUS == ACTIVE_MODE) {
+        toggle_LED(LED_SYS);
+    }
+}

@@ -7,6 +7,9 @@
 
 #include "7_SEGMENT.h"
 
+static int seg_duration = 0;
+static int seg_mode = 0;
+
 const uint8_t seg_pattern[10][7] = { { 0, 0, 0, 0, 0, 0, 1 }, //0
 		{ 1, 0, 0, 1, 1, 1, 1 }, //1
 		{ 0, 0, 1, 0, 0, 1, 0 }, //2
@@ -36,30 +39,33 @@ void display7SEG(int num, uint16_t *segPins) {
 	}
 }
 
-void update7SEG(int duration, int mode) {
-	if (actions[TIME_SEGMENT].timer_flag == 1) {
-		static int state = 0;
+void set7SEGValues(int duration, int mode) {
+    seg_duration = duration;
+    seg_mode = mode;
+}
 
-		int tensA = duration / 10;
-		int onesA = duration % 10;
+void task_Update7SEG(void) {
+    // Logic multiplexing (quét LED)
+	static int state = 0;
 
-		int tensB = mode / 10;
-		int onesB = mode % 10;
+    // Lấy giá trị từ biến static
+	int tensA = seg_duration / 10;
+	int onesA = seg_duration % 10;
+	int tensB = seg_mode / 10;
+	int onesB = seg_mode % 10;
 
-		if (state == 1) {
-			// Display Ten digits
-			HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(GPIOA, EN_B_Pin, GPIO_PIN_RESET);
-			display7SEG(tensA, segPins_A);
-			display7SEG(tensB, segPins_B);
-		} else if (state == 0) {
-			// Display One digits
-			HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(GPIOA, EN_B_Pin, GPIO_PIN_SET);
-			display7SEG(onesA, segPins_A);
-			display7SEG(onesB, segPins_B);
-		}
-		state = 1 - state; // Change state
-		reset(TIME_SEGMENT);
+	if (state == 1) {
+		// Display Ten digits
+		HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, EN_B_Pin, GPIO_PIN_RESET);
+		display7SEG(tensA, segPins_A);
+		display7SEG(tensB, segPins_B);
+	} else if (state == 0) {
+		// Display One digits
+		HAL_GPIO_WritePin(GPIOA, EN_A_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, EN_B_Pin, GPIO_PIN_SET);
+		display7SEG(onesA, segPins_A);
+		display7SEG(onesB, segPins_B);
 	}
+	state = 1 - state; // Đổi trạng thái quét
 }

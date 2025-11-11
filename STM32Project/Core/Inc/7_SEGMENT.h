@@ -16,6 +16,6 @@ uint16_t segPins_A[7];
 uint16_t segPins_B[7];
 
 void display7SEG(int, uint16_t*);
-void update7SEG(int, int);
-
+void task_Update7SEG(void);
+void set7SEGValues(int duration, int mode);
 #endif /* INC_7_SEGMENT_H_ */

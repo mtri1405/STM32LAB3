@@ -13,6 +13,7 @@ enum ButtonEvent {
 	NONE,
 	MODE_PRESSED,
 	TIME_PRESSED,
+	TIME_HOLDED,
 	SET_PRESSED
 };
 #define DISPLAY_MODE_RED_ADJUST   2
@@ -22,8 +23,7 @@ enum ButtonEvent {
 void init_fsm_manual();
 void init_manual_control();
 
-
-void handleBlinkLed();
+void task_ManualBlink(void);
 void handleControlMode();
 void handleButton();
 void manual_control_run();

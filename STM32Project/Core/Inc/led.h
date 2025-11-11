@@ -24,4 +24,5 @@ void toggle_LED(int);
 
 void init_blinkLED(int);
 void blinkLED(int);
+void task_ToggleSystemLed();
 #endif /* INC_LED_H_ */

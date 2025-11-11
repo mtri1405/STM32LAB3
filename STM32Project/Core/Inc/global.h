@@ -16,17 +16,16 @@
 #include "fsm_auto.h"
 #include "fsm_manual.h"
 #include "led.h"
-#include "timer.h"
+#include "scheduler.h"
 
 // Define state here
 
-#define TIMER_CYCLE 100
+#define TIMER_CYCLE 10
 #define LED_SEGMENT_CYCLE 200
-#define SECOND 1000
 
 #define INIT 				0
 #define ACTIVE_MODE 		1
-#define MANUAL_MODE 		2
+#define MANUAL_MODE			2
 
 #define RUNNING 1
 

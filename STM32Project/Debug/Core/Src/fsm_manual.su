@@ -1,5 +1,4 @@
-fsm_manual.c:13:18:getButtonEvent	8	static
-fsm_manual.c:21:6:init_fsm_manual	8	static
-fsm_manual.c:29:6:handleButton	8	static
-fsm_manual.c:73:6:handleBlinkLed	8	static
-fsm_manual.c:80:6:fsm_manual_run	8	static
+fsm_manual.c:13:6:task_ManualBlink	8	static
+fsm_manual.c:20:6:init_fsm_manual	8	static
+fsm_manual.c:27:6:handleButton	8	static
+fsm_manual.c:71:6:fsm_manual_run	8	static

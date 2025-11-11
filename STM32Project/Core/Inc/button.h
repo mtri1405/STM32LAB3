@@ -10,10 +10,10 @@
 
 #include "main.h"
 
-#define NO_BUTTON 4
+#define NO_BUTTON 3
 #define PRESS_STATE RESET
 #define NORMAL_STATE SET
-#define timeOutForKeyPress 50
+#define timeOutForKeyPress 100
 
 #define MODE 0
 #define TIME 1
@@ -47,8 +47,6 @@ int isTimeHold();
 int isSetPress();
 int isSetHold();
 
-// Kiểm tra Control button
-int isControlPress();
 // Read input from button
 void getKeyInput();
 
