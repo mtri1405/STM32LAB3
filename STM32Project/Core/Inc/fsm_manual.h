@@ -15,6 +15,9 @@ enum ButtonEvent {
 	TIME_PRESSED,
 	SET_PRESSED
 };
+#define DISPLAY_MODE_RED_ADJUST   2
+#define DISPLAY_MODE_GREEN_ADJUST 3
+#define DISPLAY_MODE_AMBER_ADJUST 4
 
 void init_fsm_manual();
 void init_manual_control();

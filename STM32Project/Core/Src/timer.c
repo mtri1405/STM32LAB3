@@ -6,7 +6,6 @@
  */
 
 #include <timer.h>
-
 detail_time actions[NUMBER_OF_ACTIONS];
 
 void setupTime(int index, int duration) {

@@ -17,7 +17,7 @@ int lane2 = 0;
 void handle_auto_events() {
     // 1. Nhấn Mode → chuyển sang Manual Mode
     if (isModePress()) {
-        admin_mode = MANUAL_MODE;
+    	STATUS = MANUAL_MODE;
         init_fsm_manual();
         return;
     }
@@ -26,7 +26,6 @@ void handle_auto_events() {
     if (actions[SYSTEM_LED].timer_flag) {
         toggle_LED(LED_SYS);
         reset(SYSTEM_LED);
-        return;
     }
 
     // 3. Cập nhật mỗi giây → giảm timer cho 2 làn
@@ -34,7 +33,6 @@ void handle_auto_events() {
         if (lane1 > 0) lane1--;
         if (lane2 > 0) lane2--;
         reset(ONE_SECOND);
-        return;
     }
 }
 
@@ -42,37 +40,34 @@ void handle_auto_events() {
  * FSM AUTO MODE — chỉ xử lý logic theo state
  *------------------------------------------------*/
 void fsm_auto_run() {
+	handle_auto_events();
+	update7SEG(lane1, lane2);
     switch (state_auto) {
     case RED_GREEN:
-    	handle_auto_events();
+
         if (actions[TIME_COUNT_PROGRAM].timer_flag) {
             init_RED_AMBER();
         }
-        update7SEG(lane1, lane2);
+
         break;
 
     case RED_AMBER:
-    	handle_auto_events();
+
         if (actions[TIME_COUNT_PROGRAM].timer_flag) {
             init_GREEN_RED();
         }
-        update7SEG(lane1, lane2);
         break;
 
     case GREEN_RED:
-    	handle_auto_events();
         if (actions[TIME_COUNT_PROGRAM].timer_flag) {
             init_AMBER_RED();
         }
-        update7SEG(lane1, lane2);
         break;
 
     case AMBER_RED:
-    	handle_auto_events();
         if (actions[TIME_COUNT_PROGRAM].timer_flag) {
             init_RED_GREEN();
         }
-        update7SEG(lane1, lane2);
         break;
 
     default:

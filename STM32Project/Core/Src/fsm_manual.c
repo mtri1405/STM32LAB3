@@ -26,32 +26,6 @@ void init_fsm_manual() {
 	setupTime(ONE_SECOND, SECOND / 2);
 }
 
-void init_manual_control() {
-	setupTime(ONE_SECOND, SECOND);
-
-	// Điều chỉnh lại trạng thái hiện tại của auto
-	if (state_auto == RED_AMBER)
-		state_auto = GREEN_RED;
-	if (state_auto == AMBER_RED)
-		state_auto = RED_GREEN;
-
-	switch (state_auto) {
-	case GREEN_RED: init_GREEN_RED(); break;
-	case RED_GREEN: init_RED_GREEN(); break;
-	default: break;
-	}
-}
-
-/*=====================[ INPUT HANDLERS ]=====================*/
-// Nếu Control Mode được nhấn, ghi đè và chuyển sang Control
-void handleControlMode() {
-	if (!isControlPress())
-		return;
-
-	admin_mode = MANUAL_CONTROL_MODE;
-	init_manual_control();
-}
-
 void handleButton() {
 	switch (getButtonEvent()) {
 	case MODE_PRESSED:
@@ -60,7 +34,7 @@ void handleButton() {
 		state_manual++;
 		if (state_manual > AMBER) {
 			state_manual = RED;
-			admin_mode = ACTIVE_MODE;
+			STATUS = ACTIVE_MODE;
 			come_back_auto();
 			return;
 		}
@@ -88,7 +62,7 @@ void handleButton() {
 			TrafficTimer[RED] = TrafficTimer[GREEN] + TrafficTimer[AMBER];
 			break;
 		}
-		admin_mode = ACTIVE_MODE;
+		STATUS = ACTIVE_MODE;
 		come_back_auto();
 		break;
 	default:
@@ -104,50 +78,18 @@ void handleBlinkLed() {
 }
 /*=====================[ FSM MAIN LOOP ]=====================*/
 void fsm_manual_run() {
+	handleButton();
+	handleBlinkLed();
 	switch (state_manual) {
 	case RED:
-		update7SEG(temp_time, 2);
-		handleButton();
-		handleBlinkLed();
+		update7SEG(temp_time, DISPLAY_MODE_RED_ADJUST);
 		break;
-
 	case GREEN:
-		update7SEG(temp_time, 3);
-		handleButton();
-		handleBlinkLed();
+		update7SEG(temp_time, DISPLAY_MODE_GREEN_ADJUST);
 		break;
-
 	case AMBER:
-		update7SEG(temp_time, 4);
-		handleButton();
-		handleBlinkLed();
+		update7SEG(temp_time, DISPLAY_MODE_AMBER_ADJUST);
 		break;
 	}
 }
-/*=====================[ MANUAL CONTROL MODE ]=====================*/
 
-void manual_control_run() {
-	// Giữ Mode và Set sẽ trở về chế độ auto
-	if (isControlPress()) {
-		admin_mode = ACTIVE_MODE;
-		come_back_auto();
-		return;
-	}
-	// Nhấn Set sẽ chuyển đèn
-	if (isSetPress()) {
-		switch (state_auto) {
-		case GREEN_RED:
-			state_auto = RED_GREEN;
-			init_RED_GREEN();
-			break;
-		case RED_GREEN:
-			state_auto = GREEN_RED;
-			init_GREEN_RED();
-			break;
-		default:
-			break;
-		}
-		return;
-	}
-	update7SEG(0, 0);
-}

@@ -27,7 +27,6 @@
 #define INIT 				0
 #define ACTIVE_MODE 		1
 #define MANUAL_MODE 		2
-#define MANUAL_CONTROL_MODE 3
 
 #define RUNNING 1
 
@@ -39,7 +38,7 @@
 
 #define CHANGE_LED 2
 extern int TrafficTimer[3]; // RED - GREEN - AMBER
-extern int admin_mode;
+extern int STATUS;
 
 
 void run();
