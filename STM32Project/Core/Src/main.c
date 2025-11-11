@@ -94,11 +94,12 @@ int main(void) {
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		run();
 		if (timer_flag_read_button == 1) {
 			timer_flag_read_button = 0; // Xóa cờ ngay lập tức
 			getKeyInput();
 		}
+		run();
+
 		HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 		/* USER CODE END WHILE */
 

@@ -64,10 +64,6 @@ int isSetHold() {
 	return isButtonHolding(SET);
 }
 
-// Kiểm tra Control button
-int isControlPress(){
-	return isButtonPress(CONTROL);
-}
 void getKeyInput() {
 	for (int i = 0; i < NO_BUTTON; i++) {
 		// shifting the button registry history
@@ -95,7 +91,6 @@ void getKeyInput() {
 					button[i].timeLongPress--;
 					if (button[i].timeLongPress <= 0) {
 						button[i].timeLongPress = timeOutForKeyPress;
-						button[i].flag = 1;
 						button[i].isHoldingFlag = 1;
 					}
 				} else {

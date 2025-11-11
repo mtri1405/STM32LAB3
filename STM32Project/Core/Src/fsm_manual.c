@@ -11,9 +11,14 @@ int state_manual = 0;   // 3 state RED - 0, GREEN - 1, AMBER - 2
 int temp_time;
 
 enum ButtonEvent getButtonEvent() {
-	if (isModePress()) return MODE_PRESSED;
-	if (isTimePress()) return TIME_PRESSED;
-	if (isSetPress())  return SET_PRESSED;
+	if (isModePress())
+		return MODE_PRESSED;
+	if (isTimePress())
+		return TIME_PRESSED;
+	if (isTimeHold())
+		return TIME_HOLDED;
+	if (isSetPress())
+		return SET_PRESSED;
 	return NONE;
 }
 
@@ -27,8 +32,7 @@ void init_fsm_manual() {
 }
 
 void handleButton() {
-	switch (getButtonEvent()) {
-	case MODE_PRESSED:
+	if (isModePress()){
 		// xử lý mode
 		setupTime(ONE_SECOND, SECOND / 2);
 		state_manual++;
@@ -40,18 +44,21 @@ void handleButton() {
 		}
 		temp_time = TrafficTimer[state_manual];
 		init_blinkLED(state_manual);
-		break;
-	case TIME_PRESSED:
+	} else if (isTimePress()){
 		// xử lý time
 		if (++temp_time > 99)
 			temp_time = 1; // Giới hạn mức tối đa
-		break;
-	case SET_PRESSED:
+	}
+	else if(isTimeHold()){
+		if (++temp_time > 99)
+			temp_time = 1; // Giới hạn mức tối đa
+	} else if (isSetPress()){
 		// xử lý set
 		switch (state_manual) {
 		case RED:
 			TrafficTimer[RED] = temp_time;
-			TrafficTimer[GREEN] = TrafficTimer[RED] - TrafficTimer[AMBER];
+			TrafficTimer[GREEN] = ceil(TrafficTimer[RED] *0.7);
+			TrafficTimer[AMBER] = TrafficTimer[RED] - TrafficTimer[GREEN];
 			break;
 		case GREEN:
 			TrafficTimer[GREEN] = temp_time;
@@ -64,9 +71,6 @@ void handleButton() {
 		}
 		STATUS = ACTIVE_MODE;
 		come_back_auto();
-		break;
-	default:
-		break;
 	}
 }
 /*=====================[ OUTPUT FUNCTIONS ]=====================*/

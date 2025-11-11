@@ -6,5 +6,4 @@ button.c:52:5:isTimePress	8	static
 button.c:55:5:isTimeHold	8	static
 button.c:60:5:isSetPress	8	static
 button.c:63:5:isSetHold	8	static
-button.c:68:5:isControlPress	8	static
-button.c:71:6:getKeyInput	16	static
+button.c:67:6:getKeyInput	16	static
