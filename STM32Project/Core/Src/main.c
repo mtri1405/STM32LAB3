@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "global.h"
+#include "scheduler.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -86,14 +87,18 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-	HAL_TIM_Base_Start_IT(&htim2);
 
+  SCH_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	SCH_Init();
-	SCH_Add_Task(run, 0, 0);
+  	SCH_Add_Task(getKeyInput, 0, 20); // Quét nút nhấn mỗi 10ms
+	SCH_Add_Task(run, 10, 50); // hàm run chiếm dụng quá nhiều thời gian của Scheduler
+
+	SCH_Add_Task(task_Update7SEG, 20, 250); // Update 7Seg mỗi 600ms
+	SCH_Add_Task(task_UpdateTrafficLEDs, 30, 250); //(chạy 4 lần/giây)
+	HAL_TIM_Base_Start_IT(&htim2);
 	while (1) {
 		SCH_Dispatch_Tasks();
 //		__WFI();

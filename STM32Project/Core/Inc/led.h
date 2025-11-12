@@ -25,4 +25,5 @@ void toggle_LED(int);
 void init_blinkLED(int);
 void blinkLED(int);
 void task_ToggleSystemLed();
+void task_UpdateTrafficLEDs(void);
 #endif /* INC_LED_H_ */

@@ -38,4 +38,5 @@ uint8_t SCH_Add_Task(void (*pFunction)(), uint16_t DELAY, uint16_t PERIOD);
 void SCH_Delete_Task(uint8_t index);
 void SCH_Update(void);
 void SCH_Dispatch_Tasks(void);
+void SCH_Go_To_Sleep(void);
 #endif /* INC_SCHEDULER_H_ */

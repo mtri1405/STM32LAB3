@@ -85,3 +85,46 @@ void task_ToggleSystemLed() {
         toggle_LED(LED_SYS);
     }
 }
+void task_UpdateTrafficLEDs(void) {
+    // Chỉ cập nhật nếu ở chế độ AUTO
+    if (STATUS == ACTIVE_MODE) {
+
+        // Đọc biến state_auto (từ fsm_auto.h) và bật đèn
+        switch (state_auto) {
+        case RED_GREEN:
+            turn_on_LED(LED_A_RED);
+            turn_on_LED(LED_B_GREEN);
+            turn_off_LED(LED_A_AMBER);
+            turn_off_LED(LED_A_GREEN);
+            turn_off_LED(LED_B_RED);
+            turn_off_LED(LED_B_AMBER);
+            break;
+        case RED_AMBER:
+            turn_on_LED(LED_A_RED);
+            turn_on_LED(LED_B_AMBER);
+            turn_off_LED(LED_A_AMBER);
+            turn_off_LED(LED_A_GREEN);
+            turn_off_LED(LED_B_RED);
+            turn_off_LED(LED_B_GREEN);
+            break;
+        case GREEN_RED:
+            turn_on_LED(LED_A_GREEN);
+            turn_on_LED(LED_B_RED);
+            turn_off_LED(LED_A_AMBER);
+            turn_off_LED(LED_A_RED);
+            turn_off_LED(LED_B_GREEN);
+            turn_off_LED(LED_B_AMBER);
+            break;
+        case AMBER_RED:
+            turn_on_LED(LED_A_AMBER);
+            turn_on_LED(LED_B_RED);
+            turn_off_LED(LED_A_RED);
+            turn_off_LED(LED_A_GREEN);
+            turn_off_LED(LED_B_GREEN);
+            turn_off_LED(LED_B_AMBER);
+            break;
+        }
+    }
+    // Khi ở MANUAL_MODE, tác vụ này không làm gì cả,
+    // việc nháy đèn đã được task_ManualBlink xử lý.
+}

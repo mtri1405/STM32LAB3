@@ -18,7 +18,6 @@
 #define MODE 0
 #define TIME 1
 #define SET 2
-#define CONTROL 3
 
 // Define struct for debouncing input
 typedef struct {
