@@ -1,52 +1,22 @@
-/*
- * button.h
- *
- *  Created on: Oct 13, 2025
- *      Author: mtri1
- */
-
+/* button.h */
 #ifndef INC_BUTTON_H_
 #define INC_BUTTON_H_
 
 #include "main.h"
 
-#define NO_BUTTON 3
-#define PRESS_STATE RESET
-#define NORMAL_STATE SET
-#define timeOutForKeyPress 100
+#define NORMAL_STATE GPIO_PIN_SET
+#define PRESS_STATE  GPIO_PIN_RESET
 
-#define MODE 0
-#define TIME 1
-#define SET 2
+// Định nghĩa các nút
+#define BTN_MODE 0
+#define BTN_TIME 1
+#define BTN_SET  2
 
-// Define struct for debouncing input
-typedef struct {
-	int KeyReg0;
-	int KeyReg1;
-	int KeyReg2;
-	int KeyReg3;
-	int timeLongPress;
-	int flag;
-	int isHoldingFlag;
-} keyInput;
-
-// Checking if flag = 1
-int isButtonPress(int);
-int isButtonHolding(int);
-
-// Kiểm tra MODE button
-int isModePress();
-int isModeHold();
-
-// Kiểm tra TIME button
-int isTimePress();
-int isTimeHold();
-
-// Kiểm tra SET button
-int isSetPress();
-int isSetHold();
-
-// Read input from button
 void getKeyInput();
+int isButtonPress(int index);
+// Helper functions
+int isModePress();
+int isTimePress();
+int isSetPress();
 
 #endif /* INC_BUTTON_H_ */

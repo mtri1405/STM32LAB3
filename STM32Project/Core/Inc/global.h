@@ -1,64 +1,33 @@
-/*
- * global.h
- *
- *  Created on: Oct 28, 2025
- *      Author: mtri1
- */
-
+/* global.h */
 #ifndef INC_GLOBAL_H_
 #define INC_GLOBAL_H_
 
 #include "main.h"
-#include <stdbool.h>
-#include <math.h>
-#include "7_SEGMENT.h"
+#include "timer.h"
 #include "button.h"
+#include "led.h"
+#include "7_SEGMENT.h"
+#include "scheduler.h"
 #include "fsm_auto.h"
 #include "fsm_manual.h"
-#include "led.h"
-#include "scheduler.h"
 
-// Define state here
+// --- Định nghĩa các chế độ hoạt động (STATUS) ---
+#define INIT        0
+#define AUTO        1
+#define MAN_RED     2
+#define MAN_GREEN   3
+#define MAN_AMBER   4
 
-#define TIMER_CYCLE 10
-#define LED_SEGMENT_CYCLE 200
+// --- Định nghĩa màu đèn (Index mảng) ---
+#define RED_IDX     0
+#define GREEN_IDX   1
+#define AMBER_IDX   2
 
-#define INIT 				0
-#define ACTIVE_MODE 		1
-#define MANUAL_MODE			2
-
-//#define RUNNING 1
-
-#define RED    0
-#define GREEN  1
-#define AMBER  2
-
-#define LED_SYS 0
-
-//#define CHANGE_LED 2
-
-// Biến hệ thống
+// --- Biến toàn cục ---
 extern int STATUS;
-extern int TrafficTimer[3]; // RED - GREEN - AMBER
+extern int TrafficTimer[3]; // Thời gian gốc: RED, GREEN, AMBER
 
-// Biến FSM Auto
-extern int state_auto;
-extern int lane1;
-extern int lane2;
-
-// Biến FSM Manual
-extern int state_manual;
-extern int temp_time;
-
-// Biến ID Tác vụ (Task IDs)
-extern uint8_t taskKeyInput_ID;
-extern uint8_t taskRunFSM_ID;
-extern uint8_t taskUpdate7SEG_ID;
-extern uint8_t taskUpdateTrafficLEDs_ID; // Thêm ID cho task LED
-extern uint8_t taskDecrement_ID;
-extern uint8_t taskSysLed_ID;
-extern uint8_t taskManualBlink_ID;
-
+// Hàm điều phối chính
 void run();
 
 #endif /* INC_GLOBAL_H_ */

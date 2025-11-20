@@ -88,20 +88,20 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
-  SCH_Init();
+  SCH_Init(); // Initialize scheduler
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  	SCH_Add_Task(getKeyInput, 0, 20); // Quét nút nhấn mỗi 10ms
-	SCH_Add_Task(run, 10, 50); // hàm run chiếm dụng quá nhiều thời gian của Scheduler
+  	SCH_Add_Task(timerRun, 0, 1);	// Update timer per 10ms
+  	SCH_Add_Task(getKeyInput, 1, 1); // Read putton per 10ms
+  	SCH_Add_Task(run, 2, 1);
+  	SCH_Add_Task(update7SEG, 3, 4); // Tick scheduler là 10ms -> period 2 = 200ms
+  	SCH_Add_Task(SYS_LED_Blinky, 3, 100); // BLINK PA05 per 1s
 
-	SCH_Add_Task(task_Update7SEG, 20, 250); // Update 7Seg mỗi 600ms
-	SCH_Add_Task(task_UpdateTrafficLEDs, 30, 250); //(chạy 4 lần/giây)
 	HAL_TIM_Base_Start_IT(&htim2);
 	while (1) {
 		SCH_Dispatch_Tasks();
-//		__WFI();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

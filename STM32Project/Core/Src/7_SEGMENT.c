@@ -44,7 +44,7 @@ void set7SEGValues(int duration, int mode) {
     seg_mode = mode;
 }
 
-void task_Update7SEG(void) {
+void update7SEG(void) {
     // Logic multiplexing (quét LED)
 	static int state = 0;
 

@@ -1,165 +1,74 @@
-/*
- * fsm_auto.c
- *
- *  Created on: Oct 28, 2025
- *      Author: MinhTri
- */
-
+/* fsm_auto.c */
 #include "fsm_auto.h"
 
-int state_auto = RED_GREEN;
-int lane1 = 0;
-int lane2 = 0;
+#define S_RED_GREEN 0
+#define S_RED_AMBER 1
+#define S_GREEN_RED 2
+#define S_AMBER_RED 3
 
-uint8_t taskDecrement_ID = 0;
-uint8_t taskSysLed_ID = 0;
-uint8_t taskManualBlink_ID = 0;
+int status_auto = S_RED_GREEN;
+int timeLeft_Lane1 = 0;
+int timeLeft_Lane2 = 0;
 
-// Tác vụ này đếm ngược 2 đồng hồ
-void task_DecrementTimers() {
-	// Chỉ chạy nếu đang ở AUTO_MODE
-	if (STATUS != ACTIVE_MODE)
-		return;
-
-	if (lane1 > 0)
-		lane1--;
-	if (lane2 > 0)
-		lane2--;
-
-//	// KIỂM TRA CHUYỂN STATE NGAY TẠI ĐÂY
-//	switch (state_auto) {
-//	case RED_GREEN:
-//		if (lane2 == 0) { // Hết giờ Đèn Xanh (lane2)
-//			init_RED_AMBER();
-//		}
-//		break;
-//	case RED_AMBER:
-//		if (lane2 == 0) { // Hết giờ Đèn Vàng (lane2)
-//			init_GREEN_RED();
-//		}
-//		break;
-//	case GREEN_RED:
-//		if (lane1 == 0) { // Hết giờ Đèn Xanh (lane1)
-//			init_AMBER_RED();
-//		}
-//		break;
-//	case AMBER_RED:
-//		if (lane1 == 0) { // Hết giờ Đèn Vàng (lane1)
-//			init_RED_GREEN();
-//		}
-//		break;
-//	}
+void init_fsm_auto() {
+    status_auto = S_RED_GREEN;
+    timeLeft_Lane1 = TrafficTimer[RED_IDX];
+    timeLeft_Lane2 = TrafficTimer[GREEN_IDX];
+    setTrafficRedGreen();
+    setTimer(TIMER_TRAFFIC, 1000); // 1 giây đếm lùi
 }
 
-/*------------------------------------------------
- * FSM AUTO MODE — chỉ xử lý logic theo state
- *------------------------------------------------*/
 void fsm_auto_run() {
-	if (isModePress()) {
-		STATUS = MANUAL_MODE;
-		// Xóa các tác vụ của AUTO mode
-		SCH_Delete_Task(taskDecrement_ID);
-		SCH_Delete_Task(taskSysLed_ID);
-		// Reset ID để báo hiệu task đã bị xóa
-		taskDecrement_ID = 0;
-		taskSysLed_ID = 0;
+    // 1. Xử lý đếm ngược thời gian
+    if (timer_flag[TIMER_TRAFFIC] == 1) {
+        setTimer(TIMER_TRAFFIC, 1000); // Reset timer 1s
+        timeLeft_Lane1--;
+        timeLeft_Lane2--;
+    }
 
-		init_fsm_manual();
-		return;
-	}
-	switch (state_auto) {
-	case RED_GREEN:
-		if (lane2 == 0) { // Hết giờ Đèn Xanh
-			init_RED_AMBER(); // Chỉ gọi hàm init logic
-		}
-		break;
-	case RED_AMBER:
-		if (lane2 == 0) {// Hết giờ Đèn Vàng
-			init_GREEN_RED();
-		}
-		break;
-	case GREEN_RED:
-		if (lane1 == 0) { // Hết giờ Đèn Xanh
-			init_AMBER_RED(); // Chỉ gọi hàm init logic
-		}
-		break;
-	case AMBER_RED:
-		if (lane1 == 0) {// Hết giờ Đèn Vàng
-			init_RED_GREEN();
-		}
-		break;
-	default:
-		break;
-	}
+    // 2. Hiển thị lên 7SEG
+    set7SEGValues(timeLeft_Lane1, timeLeft_Lane2);
 
-	set7SEGValues(lane1, lane2);
+    // 3. Logic chuyển trạng thái
+    switch (status_auto) {
+        case S_RED_GREEN:
+            if (timeLeft_Lane2 <= 0) { // Green lane 2 hết
+                status_auto = S_RED_AMBER;
+                timeLeft_Lane2 = TrafficTimer[AMBER_IDX];
+                setTrafficRedAmber();
+            }
+            break;
+
+        case S_RED_AMBER:
+            if (timeLeft_Lane2 <= 0) { // Amber lane 2 hết -> Cả 2 chuyển
+                status_auto = S_GREEN_RED;
+                timeLeft_Lane1 = TrafficTimer[GREEN_IDX];
+                timeLeft_Lane2 = TrafficTimer[RED_IDX];
+                setTrafficGreenRed();
+            }
+            break;
+
+        case S_GREEN_RED:
+            if (timeLeft_Lane1 <= 0) { // Green lane 1 hết
+                status_auto = S_AMBER_RED;
+                timeLeft_Lane1 = TrafficTimer[AMBER_IDX];
+                setTrafficAmberRed();
+            }
+            break;
+
+        case S_AMBER_RED:
+            if (timeLeft_Lane1 <= 0) { // Amber lane 1 hết -> Về đầu
+                status_auto = S_RED_GREEN;
+                timeLeft_Lane1 = TrafficTimer[RED_IDX];
+                timeLeft_Lane2 = TrafficTimer[GREEN_IDX];
+                setTrafficRedGreen();
+            }
+            break;
+    }
+
+    // 4. Kiểm tra nút nhấn để chuyển sang Manual
+    if (isModePress()) {
+        STATUS = MAN_RED;
+        init_fsm_manual(); // Khởi tạo manual mode cho RED
+    }
 }
-
-/*------------------------------------------------
- * Hàm khôi phục lại trạng thái AUTO sau khi
- * thoát khỏi MANUAL MODE
- *------------------------------------------------*/
-void come_back_auto() {
-	SCH_Delete_Task(taskManualBlink_ID);
-	taskManualBlink_ID = 0; // Reset ID
-	// Thêm lại các tác vụ của AUTO mode
-	if (taskDecrement_ID == 0) {
-		taskDecrement_ID = SCH_Add_Task(task_DecrementTimers, 1000, 1000);
-	}
-	if (taskSysLed_ID == 0) {
-		taskSysLed_ID = SCH_Add_Task(task_ToggleSystemLed, 500, 500);
-	}
-	// Khởi động lại logic FSM tại state hiện tại
-	switch (state_auto) {
-	case RED_GREEN:
-		lane1 = TrafficTimer[RED];
-		lane2 = TrafficTimer[GREEN];
-		break;
-	case RED_AMBER:
-		lane2 = TrafficTimer[AMBER];
-		break;
-	case GREEN_RED:
-		lane2 = TrafficTimer[RED];
-		lane1 = TrafficTimer[GREEN];
-		break;
-	case AMBER_RED:
-		lane1 = TrafficTimer[AMBER];
-		break;
-	default:
-		init_RED_GREEN();
-		break;
-	}
-}
-
-/*------------------------------------------------
- * Các hàm khởi tạo trạng thái đèn
- *------------------------------------------------*/
-void init_RED_GREEN() {
-	state_auto = RED_GREEN;
-
-	lane1 = TrafficTimer[RED];
-	lane2 = TrafficTimer[GREEN];
-	if (taskDecrement_ID == 0) {
-		taskDecrement_ID = SCH_Add_Task(task_DecrementTimers, 1000, 1000);
-	}
-	if (taskSysLed_ID == 0) {
-		taskSysLed_ID = SCH_Add_Task(task_ToggleSystemLed, 500, 500);
-	}
-}
-
-void init_RED_AMBER() {
-	state_auto = RED_AMBER;
-	lane2 = TrafficTimer[AMBER];
-}
-
-void init_GREEN_RED() {
-	state_auto = GREEN_RED;
-	lane1 = TrafficTimer[GREEN];
-	lane2 = TrafficTimer[RED];
-}
-
-void init_AMBER_RED() {
-	state_auto = AMBER_RED;
-	lane1 = TrafficTimer[AMBER];
-}
-

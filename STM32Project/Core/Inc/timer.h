@@ -5,29 +5,24 @@
  *      Author: mtri1
  */
 
+/* timer.h */
 #ifndef INC_TIMER_H_
 #define INC_TIMER_H_
-#include <stdbool.h>
 
-#define NUMBER_OF_ACTIONS 5
-#define TIMER_CYCLE 100
+#include "global.h"
 
-#define SYSTEM_LED			0
-#define ONE_SECOND 			1
-#define TIME_COUNT_PROGRAM  2
-#define TIME_SEGMENT 		3
-#define TIME_LED 			4
-extern int counter1;
-extern int flag1;
-typedef struct{
-	int time;
-	int timer_counter;
-	int timer_flag;
-} detail_time;
+// Định nghĩa các Timer ID
+#define TIMER_TRAFFIC   0  // Dùng cho đếm ngược đèn giao thông
+#define TIMER_BLINK     1  // Dùng cho nháy LED (nếu cần)
+#define TIMER_SCAN      2  // Dùng cho quét 7SEG (nếu cần)
 
-extern detail_time actions[NUMBER_OF_ACTIONS];
-void setupTime(int index, int duration);
-void reset(int index);
+#define NO_OF_TIMERS    3
+#define TIMER_CYCLE     10 // Chu kỳ gọi timerRun (10ms)
+
+extern int timer_counter[NO_OF_TIMERS];
+extern int timer_flag[NO_OF_TIMERS];
+
+void setTimer(int index, int duration);
 void timerRun();
-void timer1();
+
 #endif /* INC_TIMER_H_ */

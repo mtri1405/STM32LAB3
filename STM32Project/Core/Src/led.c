@@ -1,130 +1,56 @@
-/*
- * led.c
- *
- *  Created on: Oct 28, 2025
- *      Author: mtri1
- */
-
+/* led.c */
 #include "led.h"
 
-int state_led = 0;
-
-uint16_t array_led_pins[] = { LED_RED_Pin, LED_A_RED_Pin, LED_A_AMBER_Pin,
-		LED_A_GREEN_Pin, LED_B_RED_Pin, LED_B_AMBER_Pin, LED_B_GREEN_Pin };
-
-void turn_on_LED(int pos) {
-	HAL_GPIO_WritePin(GPIOA, array_led_pins[pos], GPIO_PIN_SET);
+void init_traffic_lights() {
+    turn_off_all();
 }
 
-void turn_off_LED(int pos) {
-	HAL_GPIO_WritePin(GPIOA, array_led_pins[pos], GPIO_PIN_RESET);
+void turn_off_all() {
+    HAL_GPIO_WritePin(LED_A_RED_GPIO_Port, LED_A_RED_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_A_GREEN_GPIO_Port, LED_A_GREEN_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_A_AMBER_GPIO_Port, LED_A_AMBER_Pin, GPIO_PIN_RESET);
+
+    HAL_GPIO_WritePin(LED_B_RED_GPIO_Port, LED_B_RED_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_B_GREEN_GPIO_Port, LED_B_GREEN_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED_B_AMBER_GPIO_Port, LED_B_AMBER_Pin, GPIO_PIN_RESET);
 }
 
-void toggle_LED(int pos) {
-	HAL_GPIO_TogglePin(GPIOA, array_led_pins[pos]);
+// Logic Auto
+void setTrafficRedGreen() {
+    turn_off_all();
+    HAL_GPIO_WritePin(LED_A_RED_GPIO_Port, LED_A_RED_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_B_GREEN_GPIO_Port, LED_B_GREEN_Pin, GPIO_PIN_SET);
+}
+void setTrafficRedAmber() {
+    turn_off_all();
+    HAL_GPIO_WritePin(LED_A_RED_GPIO_Port, LED_A_RED_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_B_AMBER_GPIO_Port, LED_B_AMBER_Pin, GPIO_PIN_SET);
+}
+void setTrafficGreenRed() {
+    turn_off_all();
+    HAL_GPIO_WritePin(LED_A_GREEN_GPIO_Port, LED_A_GREEN_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_B_RED_GPIO_Port, LED_B_RED_Pin, GPIO_PIN_SET);
+}
+void setTrafficAmberRed() {
+    turn_off_all();
+    HAL_GPIO_WritePin(LED_A_AMBER_GPIO_Port, LED_A_AMBER_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_B_RED_GPIO_Port, LED_B_RED_Pin, GPIO_PIN_SET);
 }
 
-void init_blinkLED(int color) {
-	switch (color) {
-	case RED:
-		turn_on_LED(LED_A_RED);
-		turn_on_LED(LED_B_RED);
-
-		turn_off_LED(LED_A_GREEN);
-		turn_off_LED(LED_B_GREEN);
-
-		turn_off_LED(LED_A_AMBER);
-		turn_off_LED(LED_B_AMBER);
-		break;
-	case AMBER:
-		turn_on_LED(LED_A_AMBER);
-		turn_on_LED(LED_B_AMBER);
-
-		turn_off_LED(LED_A_RED);
-		turn_off_LED(LED_B_RED);
-
-		turn_off_LED(LED_A_GREEN);
-		turn_off_LED(LED_B_GREEN);
-		break;
-	case GREEN:
-		turn_on_LED(LED_A_GREEN);
-		turn_on_LED(LED_B_GREEN);
-
-		turn_off_LED(LED_A_RED);
-		turn_off_LED(LED_B_RED);
-
-		turn_off_LED(LED_A_AMBER);
-		turn_off_LED(LED_B_AMBER);
-		break;
-	default:
-		break;
-	}
+// Logic Manual (Blink)
+void blink_Red() {
+    HAL_GPIO_TogglePin(LED_A_RED_GPIO_Port, LED_A_RED_Pin);
+    HAL_GPIO_TogglePin(LED_B_RED_GPIO_Port, LED_B_RED_Pin);
+}
+void blink_Green() {
+    HAL_GPIO_TogglePin(LED_A_GREEN_GPIO_Port, LED_A_GREEN_Pin);
+    HAL_GPIO_TogglePin(LED_B_GREEN_GPIO_Port, LED_B_GREEN_Pin);
+}
+void blink_Amber() {
+    HAL_GPIO_TogglePin(LED_A_AMBER_GPIO_Port, LED_A_AMBER_Pin);
+    HAL_GPIO_TogglePin(LED_B_AMBER_GPIO_Port, LED_B_AMBER_Pin);
 }
 
-void blinkLED(int color) {
-	switch (color) {
-	case RED:
-		toggle_LED(LED_A_RED);
-		toggle_LED(LED_B_RED);
-		break;
-	case AMBER:
-		toggle_LED(LED_A_AMBER);
-		toggle_LED(LED_B_AMBER);
-		break;
-	case GREEN:
-		toggle_LED(LED_A_GREEN);
-		toggle_LED(LED_B_GREEN);
-		break;
-	default:
-		break;
-	}
-}
-void task_ToggleSystemLed() {
-    // Chỉ nháy khi đang ở AUTO_MODE
-    if (STATUS == ACTIVE_MODE) {
-        toggle_LED(LED_SYS);
-    }
-}
-void task_UpdateTrafficLEDs(void) {
-    // Chỉ cập nhật nếu ở chế độ AUTO
-    if (STATUS == ACTIVE_MODE) {
-
-        // Đọc biến state_auto (từ fsm_auto.h) và bật đèn
-        switch (state_auto) {
-        case RED_GREEN:
-            turn_on_LED(LED_A_RED);
-            turn_on_LED(LED_B_GREEN);
-            turn_off_LED(LED_A_AMBER);
-            turn_off_LED(LED_A_GREEN);
-            turn_off_LED(LED_B_RED);
-            turn_off_LED(LED_B_AMBER);
-            break;
-        case RED_AMBER:
-            turn_on_LED(LED_A_RED);
-            turn_on_LED(LED_B_AMBER);
-            turn_off_LED(LED_A_AMBER);
-            turn_off_LED(LED_A_GREEN);
-            turn_off_LED(LED_B_RED);
-            turn_off_LED(LED_B_GREEN);
-            break;
-        case GREEN_RED:
-            turn_on_LED(LED_A_GREEN);
-            turn_on_LED(LED_B_RED);
-            turn_off_LED(LED_A_AMBER);
-            turn_off_LED(LED_A_RED);
-            turn_off_LED(LED_B_GREEN);
-            turn_off_LED(LED_B_AMBER);
-            break;
-        case AMBER_RED:
-            turn_on_LED(LED_A_AMBER);
-            turn_on_LED(LED_B_RED);
-            turn_off_LED(LED_A_RED);
-            turn_off_LED(LED_A_GREEN);
-            turn_off_LED(LED_B_GREEN);
-            turn_off_LED(LED_B_AMBER);
-            break;
-        }
-    }
-    // Khi ở MANUAL_MODE, tác vụ này không làm gì cả,
-    // việc nháy đèn đã được task_ManualBlink xử lý.
+void SYS_LED_Blinky(){
+	HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 }

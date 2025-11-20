@@ -11,6 +11,6 @@
 #include "global.h"
 
 void display7SEG(int, uint16_t*);
-void task_Update7SEG(void);
+void update7SEG(void);
 void set7SEGValues(int duration, int mode);
 #endif /* INC_7_SEGMENT_H_ */

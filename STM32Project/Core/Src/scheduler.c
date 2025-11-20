@@ -57,8 +57,8 @@ uint8_t SCH_Add_Task(void (*pFunction)(), uint16_t DELAY, uint16_t PERIOD) {
     for (uint8_t i = 0; i < SCH_MAX_TASKS; i++) {
         if (!SCH_tasks_G[i].pTask) {  // Tìm vị trí trống
             SCH_tasks_G[i].pTask = pFunction;
-            SCH_tasks_G[i].Delay = DELAY / 10; // tick 10ms
-            SCH_tasks_G[i].Period = PERIOD / 10;
+            SCH_tasks_G[i].Delay = DELAY; // tick 10ms
+            SCH_tasks_G[i].Period = PERIOD;
             SCH_tasks_G[i].RunMe = 0;
 
             SCH_Insert_Into_Queue(i);
@@ -103,42 +103,39 @@ void SCH_Delete_Task(uint8_t taskIndex) {
     SCH_tasks_G[taskIndex].RunMe = 0;
 }
 
-
-// Cập nhật các tác vụ
 void SCH_Update(void) {
     if (ReadyQueueSize == 0) return;
 
-    // Giảm thời gian chờ của tác vụ đầu tiên
-    uint8_t taskIndex = ReadyQueue[0];
-
-    // Đảm bảo task vẫn còn tồn tại (quan trọng)
-    if (SCH_tasks_G[taskIndex].pTask == NULL) {
-        SCH_Remove_From_Queue(); // Bỏ qua task rác
-        return;
+    // Chỉ giảm Delay của tác vụ đầu tiên trong hàng đợi
+    // Vì các tác vụ sau lưu Delay tương đối so với tác vụ trước
+    if (SCH_tasks_G[ReadyQueue[0]].Delay > 0) {
+        SCH_tasks_G[ReadyQueue[0]].Delay--;
     }
 
-    if (SCH_tasks_G[taskIndex].Delay > 0) {
-        SCH_tasks_G[taskIndex].Delay--;
-    }
+    // --- SỬA ĐỔI: Dùng vòng lặp để xử lý TẤT CẢ tác vụ đã đáo hạn (Delay == 0) ---
+    while (ReadyQueueSize > 0 && SCH_tasks_G[ReadyQueue[0]].Delay == 0) {
+        // Lấy tác vụ đầu tiên
+        uint8_t taskIndex = ReadyQueue[0];
 
-    // Nếu Delay về 0, xử lý tác vụ
-    if (SCH_tasks_G[taskIndex].Delay <= 0) {
+        // Đánh dấu tác vụ cần chạy
         SCH_tasks_G[taskIndex].RunMe += 1;
+
+        // Loại bỏ khỏi hàng đợi hiện tại
         SCH_Remove_From_Queue();
 
+        // Nếu là tác vụ định kỳ, nạp lại vào hàng đợi
         if (SCH_tasks_G[taskIndex].Period > 0) {
             SCH_tasks_G[taskIndex].Delay = SCH_tasks_G[taskIndex].Period;
             SCH_Insert_Into_Queue(taskIndex);
         }
     }
 }
-
 void SCH_Dispatch_Tasks(void) {
 	for (uint8_t i = 0; i < SCH_MAX_TASKS; i++) {
 		if (SCH_tasks_G[i].RunMe > 0) {
 			// Chạy tác vụ tại chỉ số i
 			(*SCH_tasks_G[i].pTask)();
-			SCH_tasks_G[i].RunMe = 0; // Xóa cờ
+			SCH_tasks_G[i].RunMe -=1; // Giảm cờ
 
 			// Nếu là tác vụ chạy 1 lần, xóa nó
 			if (SCH_tasks_G[i].Period == 0) {
@@ -146,7 +143,6 @@ void SCH_Dispatch_Tasks(void) {
 			}
 		}
 	}
-	SCH_Go_To_Sleep();
 }
 void SCH_Go_To_Sleep(void){
 	__WFI();

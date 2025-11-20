@@ -1,101 +1,56 @@
-/*
- * button.c
- *
- *  Created on: Oct 13, 2025
- *      Author: mtri1
- */
-
+/* button.c */
 #include "button.h"
 
-// Define button pin in type
-uint16_t pin_of_buttons[NO_BUTTON] = {
-MODE_Pin,
-TIME_Pin,
-SET_Pin,
-};
+#define NO_OF_BUTTONS 3
+#define DURATION_FOR_AUTO_INCREASING 200 // 2s hold
 
-// Declare number of button
-keyInput button[NO_BUTTON];
+int KeyReg0[NO_OF_BUTTONS] = {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
+int KeyReg1[NO_OF_BUTTONS] = {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
+int KeyReg2[NO_OF_BUTTONS] = {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
+int KeyReg3[NO_OF_BUTTONS] = {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
 
-//
-int isButtonPress(int idx) {
-	if (idx > NO_BUTTON || idx < 0) {
-		return -1;
-	} else {
-		if (button[idx].flag == 1) {
-			button[idx].flag = 0;
-			return 1;
-		}
-	}
-	return 0;
-}
-int isButtonHolding(int idx) {
-	if (idx > NO_BUTTON || idx < 0) {
-		return -1;
-	} else {
-		if (button[idx].isHoldingFlag == 1) {
-			return 1;
-		}
-	}
-	return 0;
-}
-// Kiểm tra MODE button
-int isModePress() {
-	return isButtonPress(MODE);
-}
-int isModeHold() {
-	return isButtonHolding(MODE);
+int TimeOutForKeyPress[NO_OF_BUTTONS] = {0, 0, 0};
+int button_flag[NO_OF_BUTTONS] = {0, 0, 0};
+
+// Mapping GPIO
+GPIO_TypeDef* BUTTON_PORT = GPIOA;
+uint16_t BUTTON_PIN[NO_OF_BUTTONS] = {MODE_Pin, TIME_Pin, SET_Pin};
+
+int isButtonPress(int index) {
+    if (button_flag[index] == 1) {
+        button_flag[index] = 0;
+        return 1;
+    }
+    return 0;
 }
 
-// Kiểm tra TIME button
-int isTimePress() {
-	return isButtonPress(TIME);
-}
-int isTimeHold() {
-	return isButtonHolding(TIME);
-}
-
-// Kiểm tra SET button
-int isSetPress() {
-	return isButtonPress(SET);
-}
-int isSetHold() {
-	return isButtonHolding(SET);
-}
+int isModePress() { return isButtonPress(BTN_MODE); }
+int isTimePress() { return isButtonPress(BTN_TIME); }
+int isSetPress()  { return isButtonPress(BTN_SET); }
 
 void getKeyInput() {
-	for (int i = 0; i < NO_BUTTON; i++) {
-		// shifting the button registry history
-		button[i].KeyReg2 = button[i].KeyReg1;
-		button[i].KeyReg1 = button[i].KeyReg0;
-		// Read current button state from hardware pin
-		button[i].KeyReg0 = HAL_GPIO_ReadPin(GPIOA, pin_of_buttons[i]);
+    for (int i = 0; i < NO_OF_BUTTONS; i++) {
+        KeyReg0[i] = KeyReg1[i];
+        KeyReg1[i] = KeyReg2[i];
+        KeyReg2[i] = HAL_GPIO_ReadPin(BUTTON_PORT, BUTTON_PIN[i]);
 
-		// Checking button state is stable for 3 read
-		if ((button[i].KeyReg0 == button[i].KeyReg1)
-				&& (button[i].KeyReg1 == button[i].KeyReg2)) {
-			//	Detect any change compare to the previous history state
-			if (button[i].KeyReg2 != button[i].KeyReg3) {
-				button[i].KeyReg3 = button[i].KeyReg2;
-
-				//	If button is press, set flag to 1 and start counting for long press timer
-				if (button[i].KeyReg3 == PRESS_STATE) {
-					button[i].timeLongPress = timeOutForKeyPress;
-					button[i].flag = 1;
-				} else {
-					button[i].flag = 0;
-				}
-			} else {
-				if (button[i].KeyReg3 == PRESS_STATE) {
-					button[i].timeLongPress--;
-					if (button[i].timeLongPress <= 0) {
-						button[i].timeLongPress = timeOutForKeyPress;
-						button[i].isHoldingFlag = 1;
-					}
-				} else {
-					button[i].isHoldingFlag = 0;
-				}
-			}
-		}
-	}
+        if ((KeyReg0[i] == KeyReg1[i]) && (KeyReg1[i] == KeyReg2[i])) {
+            if (KeyReg3[i] != KeyReg2[i]) {
+                KeyReg3[i] = KeyReg2[i];
+                if (KeyReg2[i] == PRESS_STATE) {
+                    button_flag[i] = 1;
+                    TimeOutForKeyPress[i] = DURATION_FOR_AUTO_INCREASING;
+                }
+            } else {
+                TimeOutForKeyPress[i]--;
+                if (TimeOutForKeyPress[i] == 0) {
+                    if (KeyReg2[i] == PRESS_STATE) {
+                        // Chế độ nhấn giữ (nếu cần)
+                        // button_flag[i] = 1;
+                    }
+                    TimeOutForKeyPress[i] = DURATION_FOR_AUTO_INCREASING;
+                }
+            }
+        }
+    }
 }
